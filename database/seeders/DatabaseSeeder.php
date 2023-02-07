@@ -14,12 +14,10 @@ class DatabaseSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
-		// \App\Models\User::factory(10)->create();
 
-		// \App\Models\User::factory()->create([
-		//     'name' => 'Test User',
-		//     'email' => 'test@example.com',
-		// ]);
+		/**
+		 * Create 5 users, that each have one leave request
+		 */
 		User::factory(5)->has(Leave::factory()->count(1)->state(function (array $attributes, User $user) {
 			return ['user_id' => $user->id];
 		}))->create();
