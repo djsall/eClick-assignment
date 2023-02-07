@@ -22,6 +22,17 @@
 					</select>
 				</div>
 
+				@if(Auth::user()->isManager())
+					<div class="form-group mt-2">
+						<label for="user_id" class="form-label">Employee:</label>
+						<select name="user_id" id="user_id" class="form-control">
+							@foreach($users as $user)
+								<option value="{{$user->id}}" @if(Auth::user()->id == $user->id) selected @endif>{{$user->name}}</option>
+							@endforeach
+						</select>
+					</div>
+				@endif
+
 				<button class="btn btn-success mt-4" name="submit" id="submit">Save</button>
 			</form>
 		</div>

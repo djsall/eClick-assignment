@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +27,9 @@ class LeaveController extends Controller {
 	 */
 	public function create() {
 		//
-		return view('leaves.submit');
+		return view('leaves.submit')->with([
+			'users'  => User::all(),
+		]);
 
 	}
 
@@ -39,20 +42,32 @@ class LeaveController extends Controller {
 	public function store(Request $request) {
 		//
 		$data = $request->validate([
-			'start' => [
+			'start'   => [
 				'required',
 				'date'
 			],
-			'end'   => [
+			'end'     => [
 				'required',
 				'date'
 			],
-			'type'  => [
+			'type'    => [
 				'required',
 				'in:medical,paid'
+			],
+			'user_id' => [
+				'int'
 			]
 		]);
-		$data['user_id'] = Auth::id();
+
+		/**
+		 * If the user is a manager, he can select the leaving user and it gets automatically accepted
+		 */
+		if (Auth::user()->isManager()) {
+			$data['accepted'] = true;
+			$data['user_id'] = $request['user_id'];
+		}
+		else
+			$data['user_id'] = Auth::id();
 
 		if (Leave::create($data)) {
 			$msg = [
@@ -107,7 +122,7 @@ class LeaveController extends Controller {
 		//
 	}
 
-	public function accept(Leave $leave){
+	public function accept(Leave $leave) {
 		$leave->accepted = true;
 		$leave->save();
 		return redirect(url()->previous())->with([
