@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -49,9 +50,9 @@ class User extends Authenticatable {
 
 	/**
 	 * Returns the instances of Leaves connected to the User
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 * @return HasMany
 	 */
-	public function leaves() {
+	public function leaves(): HasMany {
 		return $this->hasMany(Leave::class);
 	}
 }
