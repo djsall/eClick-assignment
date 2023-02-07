@@ -30,12 +30,24 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<!-- Left Side Of Navbar -->
 				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a href="{{ route('home') }}" class="nav-link @if(Route::is('home')) active @endif">Calendar</a>
+					</li>
 
+					<li class="nav-item">
+						<a href="{{ route('leaves.create') }}" class="nav-link @if(Route::is('leaves.create')) active @endif">Submit leave request</a>
+					</li>
+
+					@if(Auth::user()->isManager())
+						<li class="nav-item">
+							<a href="{{ route('leaves.index') }}" class="nav-link @if(Route::is('leaves.index')) active @endif">Manage leaves</a>
+						</li>
+					@endif
 				</ul>
 
 				<!-- Right Side Of Navbar -->
 				<ul class="navbar-nav ms-auto">
-					<!-- Authentication Links -->
+				<!-- Authentication Links -->
 					@guest
 						@if (Route::has('login'))
 							<li class="nav-item">
