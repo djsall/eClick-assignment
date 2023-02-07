@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Leave;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LeaveController extends Controller {
 	/**
@@ -31,10 +32,36 @@ class LeaveController extends Controller {
 	 * Store a newly created resource in storage.
 	 *
 	 * @param \Illuminate\Http\Request $request
-	 * @return \Illuminate\Http\Response
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function store(Request $request) {
 		//
+		$data = $request->validate([
+			'start' => [
+				'required',
+				'date'
+			],
+			'end'   => [
+				'required',
+				'date'
+			],
+			'type'  => [
+				'required',
+				'in:medical,paid'
+			]
+		]);
+		$data['user_id'] = Auth::id();
+
+		if (Leave::create($data)) {
+			$msg = [
+				"success" => "Leave request saved successfully."
+			];
+		}
+		else
+			$msg = [
+				"error" => "Leave request could not be saved.",
+			];
+		return redirect(url()->previous())->with($msg);
 	}
 
 	/**

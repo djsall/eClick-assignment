@@ -47,7 +47,7 @@
 
 				<!-- Right Side Of Navbar -->
 				<ul class="navbar-nav ms-auto">
-				<!-- Authentication Links -->
+					<!-- Authentication Links -->
 					@guest
 						@if (Route::has('login'))
 							<li class="nav-item">
@@ -85,6 +85,23 @@
 	</nav>
 
 	<main class="py-4">
+		@if(session('success'))
+			<div class="container-fluid pt-5 px-5">
+				<div class="alert alert-success alert-dismissible fade show" role="alert">
+					{{ session('success') }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			</div>
+		@endif
+
+		@if(session('error'))
+			<div class="container-fluid pt-5 px-5">
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					<button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
+					{{ session('error') }}
+				</div>
+			</div>
+		@endif
 		@yield('content')
 	</main>
 </div>

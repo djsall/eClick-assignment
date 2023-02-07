@@ -17,7 +17,7 @@ return new class extends Migration {
 			$table->date("end");
 			$table->unsignedBigInteger("user_id")->comment("The employee that requested this leave.");
 			$table->foreign("user_id")->references("id")->on("users");
-			$table->boolean("accepted")->comment("Whether the leave request was accepted or not.");
+			$table->boolean("accepted")->default(false)->comment("Whether the leave request was accepted or not.");
 //			$table->unsignedBigInteger("accepted_by")->comment("The user that accepted this leave request.");
 //			$table->foreign("accepted_by")->references("id")->on("users");
 			$table->enum("type", [

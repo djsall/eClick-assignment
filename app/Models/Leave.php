@@ -19,7 +19,7 @@ class Leave extends Model {
 		"accepted",
 		"type",
 	];
-	
+
 	/**
 	 * Store the possible reasons for a Leave
 	 * @var array|string[]
