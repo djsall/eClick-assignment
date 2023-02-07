@@ -7,3 +7,7 @@
 - calendar nézet szuper lenne, nincs preferencia kíváncsiak vagyunk mit hozol ötletnek
 - ha gondolod és marad rá idő akkor HO jelző egy hétre előre mondjuk - egyáltlaán nem kötelező
 - UI rád van bízva, annyit tegyél bele ami nem okoz gondot
+
+Calendar:
+- https://laraveldaily.com/post/laravel-appointment-calendar-fullcalendar-demo
+- https://laravel-news.com/laravel-livewire-calendar
