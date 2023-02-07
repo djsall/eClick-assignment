@@ -4,7 +4,10 @@
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-md-8">
-				<div id="calendar"></div>
+				<h1 class="display-5 fw-bold mb-4">Accepted leave times</h1>
+				<div class="card card-body">
+					<div id="calendar"></div>
+				</div>
 			</div>
 		</div>
 	</div>

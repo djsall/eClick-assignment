@@ -15,6 +15,10 @@ class HomeController extends Controller {
 		$this->middleware('auth');
 	}
 
+	/**
+	 * Single action controller method for displaying the calendar on the homepage.
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+	 */
 	public function __invoke() {
 		$events = [];
 
