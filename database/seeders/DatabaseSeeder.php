@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder {
 		//     'email' => 'test@example.com',
 		// ]);
 		User::factory(5)->has(Leave::factory()->count(1)->state(function (array $attributes, User $user) {
-			return ['employee_id' => $user->id];
+			return ['user_id' => $user->id];
 		}))->create();
 	}
 }
