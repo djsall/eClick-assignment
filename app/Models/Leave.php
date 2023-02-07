@@ -21,12 +21,12 @@ class Leave extends Model {
 	];
 
 	/**
-	 * Store the possible reasons for a Leave
+	 * Stores translations for Leave types
 	 * @var array|string[]
 	 */
-	public static array $types = [
-		"paid",
-		"medical"
+	private static array $translations = [
+		"paid" => "Paid",
+		"medical" => "Medical",
 	];
 
 	use HasFactory;
@@ -61,5 +61,14 @@ class Leave extends Model {
 	 */
 	public function isPaid(): bool {
 		return $this->type == "paid";
+	}
+
+	/**
+	 * Returns the translated Leave type
+	 * @return mixed|string
+	 */
+	public function getTranslatedType(){
+
+		return self::$translations[$this->type];
 	}
 }

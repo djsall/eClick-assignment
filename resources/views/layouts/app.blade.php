@@ -88,7 +88,7 @@
 		@if(session('success'))
 			<div class="container-fluid pt-5 px-5">
 				<div class="alert alert-success alert-dismissible fade show" role="alert">
-					{{ session('success') }}
+					{!! session('success') !!}
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 			</div>
@@ -98,7 +98,7 @@
 			<div class="container-fluid pt-5 px-5">
 				<div class="alert alert-danger alert-dismissible fade show" role="alert">
 					<button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
-					{{ session('error') }}
+					{!! session('error') !!}
 				</div>
 			</div>
 		@endif

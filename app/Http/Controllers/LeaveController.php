@@ -14,7 +14,9 @@ class LeaveController extends Controller {
 	 */
 	public function index() {
 		//
-		return view('leaves.manage');
+		return view('leaves.manage')->with([
+			'leaves' => Leave::with('user')->where('accepted', '=', false)->get()
+		]);
 	}
 
 	/**
@@ -103,5 +105,13 @@ class LeaveController extends Controller {
 	 */
 	public function destroy(Leave $leave) {
 		//
+	}
+
+	public function accept(Leave $leave){
+		$leave->accepted = true;
+		$leave->save();
+		return redirect(url()->previous())->with([
+			"success" => "Accepted leave for <strong>" . $leave->user->name . "</strong> between <strong>" . $leave->start . "</strong> and <strong>" . $leave->end . "</strong>."
+		]);
 	}
 }

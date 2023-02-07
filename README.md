@@ -11,4 +11,4 @@
 Gondolatok amik eszembe jutottak:
 - még elérhető szabadnapok számítása a request leadásánál
 - ha medical a leave, akkor ne lehessen elfogadni
-- lehessen törölni, hogy ne foglalja a helyet
+- lehessen törölni, hogy ne foglalja a helyet az elfogadó nézetben
