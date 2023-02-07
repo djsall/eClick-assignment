@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Leave extends Model {
+
+	/**
+	 * Store the possible reasons for a Leave
+	 * @var array|string[]
+	 */
+	public static array $types = [
+		"paid",
+		"medical"
+	];
+
 	use HasFactory;
 
 	/**
