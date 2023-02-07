@@ -21,10 +21,6 @@ return new class extends Migration {
 				"employee",
 				"manager"
 			]);
-			$table->enum("type", [
-				"medical",
-				"paid"
-			]);
 			$table->unsignedBigInteger("leaveDays");
 			$table->rememberToken();
 			$table->timestamps();

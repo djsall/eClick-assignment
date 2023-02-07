@@ -20,6 +20,10 @@ return new class extends Migration {
 			$table->boolean("accepted")->comment("Whether the leave request was accepted or not.");
 			$table->unsignedBigInteger("accepted_by")->comment("The user that accepted this leave request.");
 			$table->foreign("accepted_by")->references("id")->on("users");
+			$table->enum("type", [
+				"medical",
+				"paid"
+			]);
 			$table->timestamps();
 		});
 	}
