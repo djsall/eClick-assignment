@@ -21,11 +21,13 @@ class HomeController extends Controller {
 		$leaves = Leave::with(['user'])->get();
 
 		foreach ($leaves as $leave) {
-			$events[] = [
-				'title' => $leave->user->name,
-				'start' => $leave->start,
-				'end'   => $leave->end,
-			];
+			if ($leave->accepted) {
+				$events[] = [
+					'title' => $leave->user->name,
+					'start' => $leave->start,
+					'end'   => $leave->end,
+				];
+			}
 		}
 
 		return view('home', compact('events'));
