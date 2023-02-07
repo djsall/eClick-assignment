@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LeaveController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,3 +18,5 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/home', HomeController::class)->name('home');
+
+Route::resource('leaves', LeaveController::class);
