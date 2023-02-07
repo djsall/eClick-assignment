@@ -38,7 +38,7 @@ class User extends Authenticatable {
 	public static array $roles = [
 		"employee",
 		"manager"
-		];
+	];
 
 	public function isEmployee() {
 		return $this->role == "employee";
