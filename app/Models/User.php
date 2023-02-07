@@ -48,4 +48,12 @@ class User extends Authenticatable {
 	public function isManager() {
 		return $this->role == "manager";
 	}
+
+	/**
+	 * Returns the instances of Leaves connected to the User
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function leaves() {
+		return $this->hasMany(Leave::class);
+	}
 }
