@@ -9,6 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Leave extends Model {
 
 	/**
+	 * Mass assignable fields of Leave model
+	 * @var array
+	 */
+	protected $fillable = [
+		"start",
+		"end",
+		"user_id",
+		"accepted",
+		"type",
+	];
+	
+	/**
 	 * Store the possible reasons for a Leave
 	 * @var array|string[]
 	 */
