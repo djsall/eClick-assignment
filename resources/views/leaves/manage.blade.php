@@ -3,9 +3,15 @@
 	<div class="row justify-content-center">
 		<div class="col-md-10 p-4 d-grid gap-2">
 			@foreach($leaves as $leave)
-				<div class="row bg-white border p-2">
-					<div class="col-md-4 text-center">
-						<p class="fw-bold">{{ $leave->user->name }}</p>
+				<div class="row bg-white border p-2 d-flex align-items-center">
+					<div class="col-md-4">
+						<span class="fw-bold">{{ $leave->user->name }}</span>
+					</div>
+					<div class="col-md-2 text-center">
+						{{--						TODO: move this to translation file from model--}}
+						<span class=" @if($leave->type == 'medical') text-warning @elseif($leave->accepted) text-success @endif ">
+							{{ $leave->getTranslatedType() }}
+						</span>
 					</div>
 					<div class="col-md-2 text-center">
 						{{ $leave->start }}
@@ -13,21 +19,15 @@
 					<div class="col-md-2 text-center">
 						{{ $leave->end }}
 					</div>
-					<div class="col-md-2 text-center">
-{{--						TODO: move this to translation file from model--}}
-						{{ $leave->getTranslatedType() }}
-					</div>
-					<div class="col-md-1 text-center">
+					<div class="col-md-2 text-center d-flex flex-row justify-content-end">
 						<form action="{{ route('leave.accept', $leave->id) }}" method="post">
 							@csrf
-							<button class="btn btn-success" @if($leave->type == 'medical' || $leave->accepted) disabled @endif>Accept</button>
+							<button type="button" class="btn btn-sm btn-outline-success me-2" @if($leave->type == 'medical' || $leave->accepted) hidden @endif>✅</button>
 						</form>
-					</div>
-					<div class="col-md-1 text-center">
 						<form action="{{ route('leaves.destroy', $leave->id) }}" method="post">
 							@csrf
 							@method('DELETE')
-							<button class="btn btn-danger" @if($leave->type == 'medical') disabled @endif>Delete</button>
+							<button class="btn btn-sm btn-outline-danger" @if($leave->type == 'medical') disabled @endif>❌</button>
 						</form>
 					</div>
 				</div>
