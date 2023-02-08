@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\LeaveAccepted;
 use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class LeaveController extends Controller {
 
@@ -77,8 +79,10 @@ class LeaveController extends Controller {
 			$data['accepted'] = true;
 			$data['user_id'] = $request['user_id'];
 		}
-		else
+		else {
 			$data['user_id'] = $request->user()->id;
+			$data['accepted'] = false;
+		}
 
 		$diff = self::calculateDays($data['start'], $data['end']);
 
@@ -89,7 +93,7 @@ class LeaveController extends Controller {
 			if (Leave::create($data)) {
 				//if the leave is already accepted, update the remaining leave days, if it is not medical leave
 				if ($data['accepted'] && $data['type'] == 'paid')
-					self::updateUserDays(User::find($data['user_id']), $data['start'], $data['end']);
+					self::subtractUserDays(User::find($data['user_id']), $data['start'], $data['end']);
 				$msg = [
 					'success' => 'Leave request saved successfully.'
 				];
@@ -144,6 +148,8 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(Leave $leave) {
+		if($leave->accepted && $leave->type == 'paid')
+			self::addUserDays($leave);
 		if ($leave->delete())
 			$msg = [
 				'success' => 'Leave request for <strong>' . $leave->user->name . '</strong> deleted sucessfully.'
@@ -164,7 +170,9 @@ class LeaveController extends Controller {
 		$leave->accepted = true;
 		$leave->save();
 
-		self::updateUserDays($leave->user, $leave->start, $leave->end);
+		self::subtractUserDays($leave->user, $leave->start, $leave->end);
+
+		Mail::to($leave->user)->send(new LeaveAccepted($leave));
 
 		return redirect(url()->previous())->with([
 			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
@@ -189,8 +197,18 @@ class LeaveController extends Controller {
 	 * @param $start
 	 * @param $end
 	 */
-	static function updateUserDays(User $user, $start, $end) {
+	static function subtractUserDays(User $user, $start, $end) {
 		$user->leaveDays -= self::calculateDays($start, $end);
+		$user->save();
+	}
+
+	/**
+	 * Update the remaining leave days of our user
+	 * @param Leave $leave
+	 */
+	static function addUserDays(Leave $leave) {
+		$user = $leave->user;
+		$user->leaveDays += self::calculateDays($leave->start, $leave->end);
 		$user->save();
 	}
 }

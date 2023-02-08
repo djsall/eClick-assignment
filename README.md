@@ -8,8 +8,6 @@
 - ha gondolod és marad rá idő akkor HO jelző egy hétre előre mondjuk - egyáltlaán nem kötelező
 - UI rád van bízva, annyit tegyél bele ami nem okoz gondot
 
-Gondolatok amik eszembe jutottak:
-- manager által felvitt szabadság:
-  - választhatna, hogy szeretné e elfogadott állapotban felvinni
+Ideas:
 - ha már el lett fogadva, akkor lehessen visszavonni az elfogadást, erről is küldjön értesítést
 - felhasználó láthatná a beküldött leave requestjeit és szerkeszthetné őket, erről is jöhetne e-mail
