@@ -183,6 +183,12 @@ class LeaveController extends Controller {
 		return $start->diffInDays($end, true);
 	}
 
+	/**
+	 * Update the remaining leave days of our user
+	 * @param $user
+	 * @param $start
+	 * @param $end
+	 */
 	static function updateUserDays($user, $start, $end) {
 		$user->leaveDays -= self::calculateDays($start, $end);
 		$user->save();
