@@ -45,7 +45,7 @@
 								<a href="{{ route('leave.index') }}" class="nav-link @if(Route::is('leave.index')) active @endif">Manage leave</a>
 							</li>
 
-							<li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link @if(Route::is('users.index')) active @endif">Manage users</a></li>
+							<li class="nav-item"><a href="{{ route('user.index') }}" class="nav-link @if(Route::is('user.index')) active @endif">Manage users</a></li>
 						@endif
 					@endguest
 				</ul>

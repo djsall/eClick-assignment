@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Rules\IsAllowedDomain;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller {
 	public function __construct() {
@@ -11,6 +13,8 @@ class UserController extends Controller {
 			'only' => [
 				'index',
 				'destroy',
+				'update',
+				'edit',
 			]
 		]);
 	}
@@ -23,8 +27,8 @@ class UserController extends Controller {
 	public function index() {
 		//
 		return view('user.index')->with([
-				'users' => User::all()
-			]);
+			'users' => User::all()
+		]);
 	}
 
 	/**
@@ -49,7 +53,7 @@ class UserController extends Controller {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param \App\Models\User $user
+	 * @param User $user
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(User $user) {
@@ -59,31 +63,84 @@ class UserController extends Controller {
 	/**
 	 * Show the form for editing the specified resource.
 	 *
-	 * @param \App\Models\User $user
-	 * @return \Illuminate\Http\Response
+	 * @param User $user
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function edit(User $user) {
-		//
+		return view('user.edit')->with([
+			'user' => $user
+		]);
 	}
 
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param \Illuminate\Http\Request $request
-	 * @param \App\Models\User $user
-	 * @return \Illuminate\Http\Response
+	 * @param Request $request
+	 * @param User $user
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function update(Request $request, User $user) {
-		//
+		$data = Validator::make($request->all(), [
+			'name'      => [
+				'required',
+				'string',
+				'max:255',
+			],
+			'email'     => [
+				'required',
+				'string',
+				'email',
+				'max:255',
+				new IsAllowedDomain
+			],
+			'password'  => [
+				'required',
+				'string',
+				'min:8',
+				'confirmed',
+			],
+			'role'      => [
+				'required',
+				'in:employee,manager',
+			],
+			'leaveDays' => [
+				'required',
+				'int',
+			],
+			'post'      => [
+				'required',
+				'string',
+			]
+		])->validated();
+
+		if ($user->update($data)) {
+			$msg = [
+				'success' => 'Successfully updated user'
+			];
+		}
+		else
+			$msg = [
+				'error' => 'Error updating user'
+			];
+		return redirect(url()->previous())->with($msg);
 	}
 
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param \App\Models\User $user
-	 * @return \Illuminate\Http\Response
+	 * @param User $user
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(User $user) {
-		//
+		if ($user->delete()) {
+			$msg = [
+				"success" => "Successfully deleted user."
+			];
+		}
+		else
+			$msg = [
+				"error" => "Could not delete user."
+			];
+		return redirect(url()->previous())->with($msg);
 	}
 }

@@ -23,10 +23,9 @@ Route::middleware('auth')->group(function () {
 
 	Route::get('/', HomeController::class)->name('home');
 
-	Route::resource('users', UserController::class, [
+	Route::resource('user', UserController::class, [
 		'only' => [
 			'index',
-			'show',
 			'edit',
 			'update',
 			'destroy'
