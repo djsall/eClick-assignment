@@ -25,6 +25,7 @@ class UserFactory extends Factory {
 			'remember_token'    => Str::random(10),
 			'role'              => User::$roles[rand(0, 1)],
 			'leaveDays'         => rand(10, 22),
+			'post'              => fake()->jobTitle(),
 		];
 	}
 

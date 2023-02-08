@@ -92,6 +92,19 @@
 								@enderror
 							</div>
 
+							<div class="row mb-3">
+								<label for="post" class="col-form-label col-md-4 text-md-end">The post of the employee</label>
+								<div class="col-md-6">
+									<input type="text" id="post" name="post" class="form-control @error('post') is-invalid @enderror" required>
+								</div>
+
+								@error('post')
+								<span class="invalid-feedback" role="alert">
+									<strong>{{ $message }}</strong>
+								</span>
+								@enderror
+							</div>
+
 							<div class="row mb-0">
 								<div class="col-md-6 offset-md-4">
 									<button type="submit" class="btn btn-primary">

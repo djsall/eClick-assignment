@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
 			'show',
 		]
 	]);
-	
+
 	Route::post('leave/{leave}/accept', [
 		LeaveController::class,
 		'accept'

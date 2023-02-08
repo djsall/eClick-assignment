@@ -51,7 +51,7 @@ class RegisterController extends Controller {
 			'name'      => [
 				'required',
 				'string',
-				'max:255'
+				'max:255',
 			],
 			'email'     => [
 				'required',
@@ -65,16 +65,20 @@ class RegisterController extends Controller {
 				'required',
 				'string',
 				'min:8',
-				'confirmed'
+				'confirmed',
 			],
 			'role'      => [
 				'required',
-				'in:employee,manager'
+				'in:employee,manager',
 			],
 			'leaveDays' => [
 				'required',
-				'int'
+				'int',
 			],
+			'post'      => [
+				'required',
+				'string',
+			]
 		]);
 	}
 
@@ -91,6 +95,7 @@ class RegisterController extends Controller {
 			'password'  => Hash::make($data['password']),
 			'role'      => $data['role'],
 			'leaveDays' => $data['leaveDays'],
+			'post'      => $data['post'],
 		]);
 	}
 }

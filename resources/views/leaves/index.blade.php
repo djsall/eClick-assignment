@@ -8,9 +8,8 @@
 						<span class="fw-bold">{{ $leave->user->name }}</span>
 					</div>
 					<div class="col-md-2 text-center">
-						{{--						TODO: move this to translation file from model--}}
 						<span class=" @if($leave->type == 'medical') text-warning @elseif($leave->accepted) text-success @endif ">
-							{{ $leave->getTranslatedType() }}
+							{{ __($leave->type) }}
 						</span>
 					</div>
 					<div class="col-md-2 text-center">

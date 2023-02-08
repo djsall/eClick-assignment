@@ -20,15 +20,6 @@ class Leave extends Model {
 		"type",
 	];
 
-	/**
-	 * Stores translations for Leave types
-	 * @var array|string[]
-	 */
-	private static array $translations = [
-		"paid" => "Paid",
-		"medical" => "Medical",
-	];
-
 	use HasFactory;
 
 	/**
@@ -61,14 +52,5 @@ class Leave extends Model {
 	 */
 	public function isPaid(): bool {
 		return $this->type == "paid";
-	}
-
-	/**
-	 * Returns the translated Leave type
-	 * @return mixed|string
-	 */
-	public function getTranslatedType(){
-
-		return self::$translations[$this->type];
 	}
 }
