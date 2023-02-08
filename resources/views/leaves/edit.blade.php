@@ -2,7 +2,7 @@
 @section("content")
 	<div class="row justify-content-center">
 		<div class="col-md-6">
-			<form action="{{ route('leaves.store') }}" method="post" class="card card-body">
+			<form action="{{ route('leave.store') }}" method="post" class="card card-body">
 				@csrf
 				<div class="form-group">
 					<label for="start" class="form-label">Start date:</label>
