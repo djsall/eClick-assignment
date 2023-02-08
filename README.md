@@ -9,13 +9,7 @@
 - UI rád van bízva, annyit tegyél bele ami nem okoz gondot
 
 Gondolatok amik eszembe jutottak:
-- még elérhető szabadnapok számítása a request leadásánál
-- ha medical a leave, akkor ne lehessen elfogadni, mert az inkább bejelentés, mint választási lehetőség a munkáltatónak
-- lehessen elutasítani a szabadságot, hogy ne foglalja a helyet az elfogadó nézetben, esetleg ekkor is értesítsen e-mailben
-  - ehhez felvennék mégegy mezőt a leaves táblára, ami tárolja a rejected nevű mezőn ezt az értéket
-  - ha rejected az érték, akkor nem jelenik meg, illetve elutasításkor a dolgozó kap egy e-mailt
-  - elutasító gombot (formmal) helyeznék el a manage leaves oldalra
-  - hozzáadnék egy új route-t és controller függvényt
 - manager által felvitt szabadság:
   - választhatna, hogy szeretné e elfogadott állapotban felvinni
 - ha már el lett fogadva, akkor lehessen visszavonni az elfogadást, erről is küldjön értesítést
+- felhasználó láthatná a beküldött leave requestjeit és szerkeszthetné őket, erről is jöhetne e-mail
