@@ -93,7 +93,7 @@ class LeaveController extends Controller {
 			if ($leave = Leave::create($data)) {
 				//if the leave is already accepted, update the remaining leave days, if it is not medical leave
 				if ($data['accepted'] && $data['type'] == 'paid') {
-					$user = User::find($data['user_id']);
+					$user = $leave->user;
 					self::subtractUserDays($user, $data['start'], $data['end']);
 					Mail::to($user)->send(new LeaveAccepted($leave));
 				}
