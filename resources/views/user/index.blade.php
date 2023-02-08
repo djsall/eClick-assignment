@@ -2,26 +2,26 @@
 @section("content")
 	<div class="row justify-content-center">
 		<div class="col-md-10 p-4 d-grid gap-2">
-			<div class="row bg-white border p-2 d-flex align-items-center">
-				<div class="col-md-3">
-					<span class="text-muted small">Name</span>
+			<div class="row border p-2 d-flex align-items-center small text-muted bg-light">
+				<div class="col-md-4">
+					Name
 				</div>
 				<div class="col-md-3">
-					<span class="text-muted small">Post</span>
+					Post
 				</div>
 				<div class="col-md-3">
-					<span class="text-muted small">E-Mail</span>
+					E-Mail
 				</div>
 				<div class="col-md-1">
-					<span class="text-muted small">Role</span>
+					Role
 				</div>
-				<div class="col-md-2">
-					<span class="text-muted small">Leave days</span>
+				<div class="col-md-1">
+					Leave days
 				</div>
 			</div>
 			@foreach($users as $user)
 				<div class="row bg-white border p-2 d-flex align-items-center">
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<a href="{{ route("users.edit", $user->id) }}" class="fw-bold">{{ $user->name }}</a>
 					</div>
 					<div class="col-md-3">
@@ -33,7 +33,7 @@
 					<div class="col-md-1">
 						{{ $user->role }}
 					</div>
-					<div class="col-md-2">
+					<div class="col-md-1">
 						{{ $user->leaveDays }} days
 					</div>
 				</div>
