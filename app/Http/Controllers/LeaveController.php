@@ -30,7 +30,7 @@ class LeaveController extends Controller {
 	public function index() {
 
 		return view('leaves.index')->with([
-			'leaves' => Leave::with('user')->get()
+			'leaves' => Leave::with('user')->orderByDesc('created_at')->get()
 		]);
 	}
 
@@ -78,22 +78,22 @@ class LeaveController extends Controller {
 		if ($request->user()->isManager()) {
 			$data['accepted'] = true;
 			$data['user_id'] = $request['user_id'];
+			$user = User::find($data['user_id']);
 		}
 		else {
 			$data['user_id'] = $request->user()->id;
 			$data['accepted'] = false;
+			$user = $request->user();
 		}
 
 		$diff = self::calculateDays($data['start'], $data['end']);
-
 		/**
 		 * If the user has enough days to spare, or if they are notifying us of medical leave
 		 */
-		if ($request->user()->leaveDays >= $diff || $data['type'] == 'medical') {
+		if ($user->leaveDays >= $diff || $data['type'] == 'medical') {
 			if ($leave = Leave::create($data)) {
 				//if the leave is already accepted, update the remaining leave days, if it is not medical leave
 				if ($data['accepted'] && $data['type'] == 'paid') {
-					$user = $leave->user;
 					self::subtractUserDays($user, $data['start'], $data['end']);
 					Mail::to($user)->send(new LeaveAccepted($leave));
 				}
