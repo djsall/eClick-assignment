@@ -17,8 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/home', HomeController::class)->name('home');
 
-Route::resource('leaves', LeaveController::class);
+Route::middleware('auth')->group(function () {
 
-Route::post('leaves/{leave}/accept', [LeaveController::class, 'accept'])->name('leave.accept');
+	Route::get('/', HomeController::class)->name('home');
+
+	Route::resource('leaves', LeaveController::class, ['except' => 'show']);
+
+	Route::post('leaves/{leave}/accept', [
+		LeaveController::class,
+		'accept'
+	])->name('leave.accept');
+});
