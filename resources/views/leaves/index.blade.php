@@ -25,7 +25,7 @@
 						<span class="fw-bold">{{ $leave->user->name }}</span> <span class="small text-muted">({{$leave->user->post}})</span>
 					</div>
 					<div class="col-md-2 text-center">
-						<span class=" @if($leave->type == 'medical') text-warning @elseif($leave->accepted) text-success @endif ">
+						<span class=" @if($leave->type == 'medical') text-info @elseif($leave->accepted) text-success @endif ">
 							{{ __($leave->type) }}
 						</span>
 					</div>

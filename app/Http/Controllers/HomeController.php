@@ -25,7 +25,7 @@ class HomeController extends Controller {
 		$leaves = Leave::with(['user'])->get();
 
 		foreach ($leaves as $leave) {
-			if ($leave->accepted) {
+			if ($leave->accepted || $leave->type == 'medical') {
 				$events[] = [
 					'title' => $leave->user->name,
 					'start' => $leave->start,
