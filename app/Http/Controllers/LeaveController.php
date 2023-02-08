@@ -71,7 +71,7 @@ class LeaveController extends Controller {
 		]);
 
 		/**
-		 * If the user is a manager, he can select the leaving user and it gets automatically accepted
+		 * If the user is a manager, he can select the leaving user, and it gets automatically accepted
 		 */
 		if ($request->user()->isManager()) {
 			$data['accepted'] = true;
@@ -80,14 +80,14 @@ class LeaveController extends Controller {
 		else
 			$data['user_id'] = $request->user()->id;
 
+		$diff = self::calculateDays($data['start'], $data['end']);
+
 		/**
 		 * If the user has enough days to spare, or if they are notifying us of medical leave
 		 */
-		$diff = self::calculateDays($data['start'], $data['end']);
-
 		if ($request->user()->leaveDays >= $diff || $data['type'] == 'medical') {
 			if (Leave::create($data)) {
-				//if the leave is already accepted, calculate the remaining leave days, if it is not medical leave
+				//if the leave is already accepted, update the remaining leave days, if it is not medical leave
 				if ($data['accepted'] && $data['type'] == 'paid')
 					self::updateUserDays(User::find($data['user_id']), $data['start'], $data['end']);
 				$msg = [
@@ -185,11 +185,11 @@ class LeaveController extends Controller {
 
 	/**
 	 * Update the remaining leave days of our user
-	 * @param $user
+	 * @param User $user
 	 * @param $start
 	 * @param $end
 	 */
-	static function updateUserDays($user, $start, $end) {
+	static function updateUserDays(User $user, $start, $end) {
 		$user->leaveDays -= self::calculateDays($start, $end);
 		$user->save();
 	}

@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
 	Route::resource('leave', LeaveController::class, [
 		'except' => [
 			'show',
+			'update',
 		]
 	]);
 
