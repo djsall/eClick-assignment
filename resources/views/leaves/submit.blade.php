@@ -17,8 +17,8 @@
 				<div class="form-group mt-2">
 					<label for="type" class="form-label">Type:</label>
 					<select name="type" id="type" class="form-select" required>
+						<option value="paid" selected>Paid</option>
 						<option value="medical">Medical</option>
-						<option value="paid">Paid</option>
 					</select>
 				</div>
 
