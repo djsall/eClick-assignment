@@ -24,7 +24,7 @@
 							@csrf
 							<button class="btn btn-sm btn-outline-success me-2" @if($leave->type == 'medical' || $leave->accepted) hidden @endif>✅</button>
 						</form>
-						<form action="{{ route('leaves.destroy', $leave->id) }}" method="post">
+						<form action="{{ route('leave.destroy', $leave->id) }}" method="post">
 							@csrf
 							@method('DELETE')
 							<button class="btn btn-sm btn-outline-danger" @if($leave->type == 'medical') disabled @endif>❌</button>

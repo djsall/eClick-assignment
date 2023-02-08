@@ -37,12 +37,12 @@
 						</li>
 
 						<li class="nav-item">
-							<a href="{{ route('leaves.create') }}" class="nav-link @if(Route::is('leaves.create')) active @endif">Submit leave request</a>
+							<a href="{{ route('leave.create') }}" class="nav-link @if(Route::is('leave.create')) active @endif">Submit leave request</a>
 						</li>
 
 						@if(Auth::user()->isManager())
 							<li class="nav-item">
-								<a href="{{ route('leaves.index') }}" class="nav-link @if(Route::is('leaves.index')) active @endif">Manage leaves</a>
+								<a href="{{ route('leave.index') }}" class="nav-link @if(Route::is('leave.index')) active @endif">Manage leave</a>
 							</li>
 						@endif
 					@endguest

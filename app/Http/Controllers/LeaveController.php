@@ -81,14 +81,19 @@ class LeaveController extends Controller {
 			$data['user_id'] = $request->user()->id;
 
 		/**
-		 * If the user has more days to spare than they requested, or if they are notifying us of medical leave
+		 * If the user has enough days to spare, or if they are notifying us of medical leave
 		 */
+		$diff = self::calculateDays($data['start'], $data['end']);
 
-		if ($request->user()->leaveDays >= self::calculateDays($data['start'], $data['end']) || $data['type'] == 'medical') {
-			if (Leave::create($data))
+		if ($request->user()->leaveDays >= $diff || $data['type'] == 'medical') {
+			if (Leave::create($data)) {
+				//if the leave is already accepted, calculate the remaining leave days, if it is not medical leave
+				if ($data['accepted'] && $data['type'] == 'paid')
+					self::updateUserDays(User::find($data['user_id']), $data['start'], $data['end']);
 				$msg = [
 					'success' => 'Leave request saved successfully.'
 				];
+			}
 			//TODO: else: log database error?
 		}
 		else
@@ -101,7 +106,7 @@ class LeaveController extends Controller {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Leave $leave) {
@@ -111,7 +116,7 @@ class LeaveController extends Controller {
 	/**
 	 * Show the form for editing a Leave request
 	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function edit(Leave $leave) {
@@ -125,7 +130,7 @@ class LeaveController extends Controller {
 	 * Update the specified resource in storage.
 	 *
 	 * @param \Illuminate\Http\Request $request
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Leave $leave) {
@@ -135,11 +140,11 @@ class LeaveController extends Controller {
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(Leave $leave) {
-		if ($leave->forceDelete())
+		if ($leave->delete())
 			$msg = [
 				'success' => 'Leave request for <strong>' . $leave->user->name . '</strong> deleted sucessfully.'
 			];
@@ -159,9 +164,7 @@ class LeaveController extends Controller {
 		$leave->accepted = true;
 		$leave->save();
 
-		$user = $leave->user;
-		$user->leaveDays -= self::calculateDays($leave->start, $leave->end);
-		$user->save();
+		self::updateUserDays($leave->user, $leave->start, $leave->end);
 
 		return redirect(url()->previous())->with([
 			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
@@ -178,5 +181,10 @@ class LeaveController extends Controller {
 		$start = Carbon::parse($start);
 		$end = Carbon::parse($end);
 		return $start->diffInDays($end, true);
+	}
+
+	static function updateUserDays($user, $start, $end) {
+		$user->leaveDays -= self::calculateDays($start, $end);
+		$user->save();
 	}
 }

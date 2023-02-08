@@ -33,19 +33,13 @@ Route::middleware('auth')->group(function () {
 		]
 	])->middleware("manager");
 
-	Route::resource('leaves', LeaveController::class, [
+	Route::resource('leave', LeaveController::class, [
 		'except' => [
 			'show',
-//			'destroy'
 		]
 	]);
-
-/*	Route::delete('leaves/{leave}/delete', [
-		LeaveController::class,
-		'destroy'
-	])->name('leaves.destroy');*/
-
-	Route::post('leaves/{leave}/accept', [
+	
+	Route::post('leave/{leave}/accept', [
 		LeaveController::class,
 		'accept'
 	])->name('leave.accept');
