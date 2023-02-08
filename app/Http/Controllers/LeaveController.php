@@ -13,6 +13,7 @@ class LeaveController extends Controller {
 	public function __construct() {
 		$this->middleware('manager', [
 			'only' => [
+				'index',
 				'destroy',
 				'accept',
 			]
@@ -26,7 +27,7 @@ class LeaveController extends Controller {
 	 */
 	public function index() {
 
-		return view('leaves.manage')->with([
+		return view('leaves.index')->with([
 			'leaves' => Leave::with('user')->get()
 		]);
 	}
@@ -38,7 +39,7 @@ class LeaveController extends Controller {
 	 */
 	public function create() {
 
-		return view('leaves.submit')->with([
+		return view('leaves.create')->with([
 			'users' => User::all(),
 		]);
 	}
@@ -158,10 +159,10 @@ class LeaveController extends Controller {
 		$leave->accepted = true;
 		$leave->save();
 
-		/** @var User $user */
-		$user = $leave->user();
+		$user = $leave->user;
 		$user->leaveDays -= self::calculateDays($leave->start, $leave->end);
 		$user->save();
+
 		return redirect(url()->previous())->with([
 			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
 		]);

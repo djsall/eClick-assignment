@@ -22,7 +22,7 @@
 					<div class="col-md-2 text-center d-flex flex-row justify-content-end">
 						<form action="{{ route('leave.accept', $leave->id) }}" method="post">
 							@csrf
-							<button type="button" class="btn btn-sm btn-outline-success me-2" @if($leave->type == 'medical' || $leave->accepted) hidden @endif>✅</button>
+							<button class="btn btn-sm btn-outline-success me-2" @if($leave->type == 'medical' || $leave->accepted) hidden @endif>✅</button>
 						</form>
 						<form action="{{ route('leaves.destroy', $leave->id) }}" method="post">
 							@csrf
