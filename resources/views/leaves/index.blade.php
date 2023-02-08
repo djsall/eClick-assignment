@@ -5,7 +5,7 @@
 			@foreach($leaves as $leave)
 				<div class="row bg-white border p-2 d-flex align-items-center">
 					<div class="col-md-4">
-						<span class="fw-bold">{{ $leave->user->name }}</span>
+						<span class="fw-bold">{{ $leave->user->name }}</span> <span class="small text-muted">({{$leave->user->post}})</span>
 					</div>
 					<div class="col-md-2 text-center">
 						<span class=" @if($leave->type == 'medical') text-warning @elseif($leave->accepted) text-success @endif ">
