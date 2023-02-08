@@ -90,10 +90,13 @@ class LeaveController extends Controller {
 		 * If the user has enough days to spare, or if they are notifying us of medical leave
 		 */
 		if ($request->user()->leaveDays >= $diff || $data['type'] == 'medical') {
-			if (Leave::create($data)) {
+			if ($leave = Leave::create($data)) {
 				//if the leave is already accepted, update the remaining leave days, if it is not medical leave
-				if ($data['accepted'] && $data['type'] == 'paid')
-					self::subtractUserDays(User::find($data['user_id']), $data['start'], $data['end']);
+				if ($data['accepted'] && $data['type'] == 'paid') {
+					$user = User::find($data['user_id']);
+					self::subtractUserDays($user, $data['start'], $data['end']);
+					Mail::to($user)->send(new LeaveAccepted($leave));
+				}
 				$msg = [
 					'success' => 'Leave request saved successfully.'
 				];
@@ -148,7 +151,7 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(Leave $leave) {
-		if($leave->accepted && $leave->type == 'paid')
+		if ($leave->accepted && $leave->type == 'paid')
 			self::addUserDays($leave);
 		if ($leave->delete())
 			$msg = [
