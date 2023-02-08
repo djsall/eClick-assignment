@@ -82,11 +82,8 @@ class LeaveController extends Controller {
 		/**
 		 * If the user has more days to spare than they requested, or if they are notifying us of medical leave
 		 */
-		$start = Carbon::parse($data['start']);
-		$end = Carbon::parse($data['end']);
-		$diff = $start->diffInDays($end, false);
 
-		if ($request->user()->leaveDays >= $diff || $data['type'] == 'medical') {
+		if ($request->user()->leaveDays >= self::calculateDays($data['start'], $data['end']) || $data['type'] == 'medical') {
 			if (Leave::create($data))
 				$msg = [
 					'success' => 'Leave request saved successfully.'
@@ -111,13 +108,16 @@ class LeaveController extends Controller {
 	}
 
 	/**
-	 * Show the form for editing the specified resource.
+	 * Show the form for editing a Leave request
 	 *
 	 * @param \App\Models\Leave $leave
-	 * @return \Illuminate\Http\Response
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function edit(Leave $leave) {
-		//
+
+		return view('leaves.edit')->with([
+			'leave' => $leave
+		]);
 	}
 
 	/**
@@ -138,7 +138,7 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(Leave $leave) {
-		if ($leave->delete())
+		if ($leave->forceDelete())
 			$msg = [
 				'success' => 'Leave request for <strong>' . $leave->user->name . '</strong> deleted sucessfully.'
 			];
@@ -157,8 +157,25 @@ class LeaveController extends Controller {
 	public function accept(Leave $leave) {
 		$leave->accepted = true;
 		$leave->save();
+
+		/** @var User $user */
+		$user = $leave->user();
+		$user->leaveDays -= self::calculateDays($leave->start, $leave->end);
+		$user->save();
 		return redirect(url()->previous())->with([
 			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
 		]);
+	}
+
+	/**
+	 * Returns the distance in days between two dates
+	 * @param $start
+	 * @param $end
+	 * @return int
+	 */
+	static function calculateDays($start, $end) {
+		$start = Carbon::parse($start);
+		$end = Carbon::parse($end);
+		return $start->diffInDays($end, true);
 	}
 }

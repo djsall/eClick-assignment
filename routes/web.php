@@ -22,7 +22,12 @@ Route::middleware('auth')->group(function () {
 
 	Route::get('/', HomeController::class)->name('home');
 
-	Route::resource('leaves', LeaveController::class, ['except' => 'show']);
+	Route::resource('leaves', LeaveController::class, ['except' => 'show', 'destroy']);
+
+	Route::delete('leaves/{leave}/delete', [
+		LeaveController::class,
+		'destroy'
+	])->name('leaves.destroy');
 
 	Route::post('leaves/{leave}/accept', [
 		LeaveController::class,
