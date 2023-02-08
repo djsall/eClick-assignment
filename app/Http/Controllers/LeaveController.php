@@ -4,19 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Leave;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LeaveController extends Controller {
+
+	public function __construct() {
+		$this->middleware('manager', [
+			'only' => [
+				'destroy',
+				'accept',
+			]
+		]);
+	}
+
 	/**
 	 * Display an owerview of leave requests.
 	 *
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function index() {
-		//
+
 		return view('leaves.manage')->with([
-			'leaves' => Leave::with('user')->where('accepted', '=', false)->get()
+			'leaves' => Leave::with('user')->get()
 		]);
 	}
 
@@ -26,11 +37,10 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function create() {
-		//
-		return view('leaves.submit')->with([
-			'users'  => User::all(),
-		]);
 
+		return view('leaves.submit')->with([
+			'users' => User::all(),
+		]);
 	}
 
 	/**
@@ -40,7 +50,7 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function store(Request $request) {
-		//
+
 		$data = $request->validate([
 			'start'   => [
 				'required',
@@ -62,21 +72,30 @@ class LeaveController extends Controller {
 		/**
 		 * If the user is a manager, he can select the leaving user and it gets automatically accepted
 		 */
-		if (Auth::user()->isManager()) {
+		if ($request->user()->isManager()) {
 			$data['accepted'] = true;
 			$data['user_id'] = $request['user_id'];
 		}
 		else
-			$data['user_id'] = Auth::id();
+			$data['user_id'] = $request->user()->id;
 
-		if (Leave::create($data)) {
-			$msg = [
-				"success" => "Leave request saved successfully."
-			];
+		/**
+		 * If the user has more days to spare than they requested, or if they are notifying us of medical leave
+		 */
+		$start = Carbon::parse($data['start']);
+		$end = Carbon::parse($data['end']);
+		$diff = $start->diffInDays($end, false);
+
+		if ($request->user()->leaveDays >= $diff || $data['type'] == 'medical') {
+			if (Leave::create($data))
+				$msg = [
+					'success' => 'Leave request saved successfully.'
+				];
+			//TODO: else: log database error?
 		}
 		else
 			$msg = [
-				"error" => "Leave request could not be saved.",
+				'error' => 'Leave request could not be saved. (Requested days: ' . $diff . ', remaining days: ' . $request->user()->leaveDays . ')',
 			];
 		return redirect(url()->previous())->with($msg);
 	}
@@ -116,17 +135,30 @@ class LeaveController extends Controller {
 	 * Remove the specified resource from storage.
 	 *
 	 * @param \App\Models\Leave $leave
-	 * @return \Illuminate\Http\Response
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(Leave $leave) {
-		//
+		if ($leave->delete())
+			$msg = [
+				'success' => 'Leave request for <strong>' . $leave->user->name . '</strong> deleted sucessfully.'
+			];
+		else
+			$msg = [
+				'error' => 'Leave request could not be deleted.'
+			];
+		return redirect(url()->previous())->with($msg);
 	}
 
+	/**
+	 * Assign accepted to a leave request
+	 * @param Leave $leave
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+	 */
 	public function accept(Leave $leave) {
 		$leave->accepted = true;
 		$leave->save();
 		return redirect(url()->previous())->with([
-			"success" => "Accepted leave for <strong>" . $leave->user->name . "</strong> between <strong>" . $leave->start . "</strong> and <strong>" . $leave->end . "</strong>."
+			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
 		]);
 	}
 }

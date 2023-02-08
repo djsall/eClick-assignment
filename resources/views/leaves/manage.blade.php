@@ -14,12 +14,20 @@
 						{{ $leave->end }}
 					</div>
 					<div class="col-md-2 text-center">
+{{--						TODO: move this to translation file from model--}}
 						{{ $leave->getTranslatedType() }}
 					</div>
-					<div class="col-md-2 text-center">
+					<div class="col-md-1 text-center">
 						<form action="{{ route('leave.accept', $leave->id) }}" method="post">
 							@csrf
-							<button class="btn btn-success">Accept</button>
+							<button class="btn btn-success" @if($leave->type == 'medical' || $leave->accepted) disabled @endif>Accept</button>
+						</form>
+					</div>
+					<div class="col-md-1 text-center">
+						<form action="{{ route('leaves.destroy', $leave->id) }}" method="post">
+							@csrf
+							@method('DELETE')
+							<button class="btn btn-danger" @if($leave->type == 'medical') disabled @endif>Delete</button>
 						</form>
 					</div>
 				</div>

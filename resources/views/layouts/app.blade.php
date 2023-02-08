@@ -30,19 +30,22 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<!-- Left Side Of Navbar -->
 				<ul class="navbar-nav me-auto">
-					<li class="nav-item">
-						<a href="{{ route('home') }}" class="nav-link @if(Route::is('home')) active @endif">Calendar</a>
-					</li>
-
-					<li class="nav-item">
-						<a href="{{ route('leaves.create') }}" class="nav-link @if(Route::is('leaves.create')) active @endif">Submit leave request</a>
-					</li>
-
-					@if(Auth::user()->isManager())
+					@guest
+					@else
 						<li class="nav-item">
-							<a href="{{ route('leaves.index') }}" class="nav-link @if(Route::is('leaves.index')) active @endif">Manage leaves</a>
+							<a href="{{ route('home') }}" class="nav-link @if(Route::is('home')) active @endif">Calendar</a>
 						</li>
-					@endif
+
+						<li class="nav-item">
+							<a href="{{ route('leaves.create') }}" class="nav-link @if(Route::is('leaves.create')) active @endif">Submit leave request</a>
+						</li>
+
+						@if(Auth::user()->isManager())
+							<li class="nav-item">
+								<a href="{{ route('leaves.index') }}" class="nav-link @if(Route::is('leaves.index')) active @endif">Manage leaves</a>
+							</li>
+						@endif
+					@endguest
 				</ul>
 
 				<!-- Right Side Of Navbar -->
@@ -97,7 +100,7 @@
 		@if(session('error'))
 			<div class="container-fluid pt-5 px-5">
 				<div class="alert alert-danger alert-dismissible fade show" role="alert">
-					<button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					{!! session('error') !!}
 				</div>
 			</div>
@@ -106,5 +109,11 @@
 	</main>
 </div>
 @stack('scripts')
+<script>
+	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+		return new bootstrap.Tooltip(tooltipTriggerEl)
+	});
+</script>
 </body>
 </html>
