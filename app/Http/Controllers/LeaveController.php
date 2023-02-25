@@ -64,6 +64,8 @@ class LeaveController extends Controller {
 			$user = $request->user();
 		}
 
+		$leave = new Leave($data);
+
 		$minDate = Carbon::now();
 		$checkStart = Carbon::parse($data['start'])->gte($minDate);
 		$checkEnd = Carbon::parse($data['end'])->gte($minDate);
@@ -72,11 +74,11 @@ class LeaveController extends Controller {
 		/**
 		 * If the user has enough days to spare, or if they are notifying us of medical leave, than save our leave request.
 		 */
-		if (!$user->hasEnoughLeaveDaysFor($diffInDays))
+		if (!$user->hasEnoughLeaveDaysFor($leave))
 			$msg = [
 				'error' => 'Leave request could not be saved. (Requested days: ' . $diffInDays . ', remaining days: ' . $request->user()->leaveDays . ')',
 			];
-		else if (!($checkStart && $checkEnd))
+		else if (!$leave->verifyInputDates())
 			$msg = [
 				'error' => 'You can not request a leave for days that have already passed.',
 			];

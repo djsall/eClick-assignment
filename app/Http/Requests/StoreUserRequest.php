@@ -41,6 +41,7 @@ class StoreUserRequest extends FormRequest {
 			'post'      => [
 				'required',
 				'string',
-			];
+			],
+		];
 	}
 }
