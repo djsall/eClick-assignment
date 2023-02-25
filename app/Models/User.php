@@ -70,7 +70,7 @@ class User extends Authenticatable {
 
 	public function addLeaveDays(Leave $leave) {
 		$this->leaveDays += Apphelper::calculateDays($leave->start, $leave->end);
-		$this->save();
+		$this->update();
 	}
 
 	/**
@@ -80,7 +80,7 @@ class User extends Authenticatable {
 	 */
 	public function subtractLeaveDays($start, $end) {
 		$this->leaveDays -= AppHelper::calculateDays($start, $end);
-		$this->save();
+		$this->update();
 	}
 
 	/**
@@ -89,5 +89,14 @@ class User extends Authenticatable {
 	 */
 	public function leaves(): HasMany {
 		return $this->hasMany(Leave::class);
+	}
+
+	/**
+	 * Returns wether the user has enough days remaining for the requested amount.
+	 * @param $days
+	 * @return bool
+	 */
+	public function hasEnoughLeaveDaysFor($days): bool {
+		return $this->leaveDays >= $days;
 	}
 }

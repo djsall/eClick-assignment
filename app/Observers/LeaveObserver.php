@@ -39,7 +39,6 @@ class LeaveObserver {
 			return;
 
 		$leave->user->subtractLeaveDays($leave->start, $leave->end);
-		$leave->update();
 
 		Mail::to($leave->user)->send(new LeaveAccepted($leave));
 

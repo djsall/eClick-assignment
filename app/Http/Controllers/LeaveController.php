@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use App\Http\Requests\StoreLeaveRequest;
 use App\Models\Leave;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LeaveController extends Controller {
@@ -22,7 +23,6 @@ class LeaveController extends Controller {
 
 	/**
 	 * Display an owerview of leave requests.
-	 *
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function index() {
@@ -34,7 +34,6 @@ class LeaveController extends Controller {
 
 	/**
 	 * Show the form for creating a new leave request.
-	 *
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function create() {
@@ -46,7 +45,6 @@ class LeaveController extends Controller {
 
 	/**
 	 * Store a newly created resource in storage.
-	 *
 	 * @param StoreLeaveRequest $request
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
@@ -66,25 +64,37 @@ class LeaveController extends Controller {
 			$user = $request->user();
 		}
 
-		$diff = AppHelper::calculateDays($data['start'], $data['end']);
+		$leave = new Leave($data);
+
+		$minDate = Carbon::now();
+		$checkStart = Carbon::parse($data['start'])->gte($minDate);
+		$checkEnd = Carbon::parse($data['end'])->gte($minDate);
+		$isMedical = $data['type'] == 'medical';
+		$diffInDays = AppHelper::calculateDays($data['start'], $data['end']);
+
 		/**
 		 * If the user has enough days to spare, or if they are notifying us of medical leave
 		 */
-		if (($user->leaveDays >= $diff || $data['type'] == 'medical') && Leave::create($data)) {
+		if (!$user->hasEnoughLeaveDaysFor($diffInDays))
+			$msg = [
+				'error' => 'Leave request could not be saved. (Requested days: ' . $diffInDays . ', remaining days: ' . $request->user()->leaveDays . ')',
+			];
+		else if ((!($checkStart && $checkEnd)) || $isMedical)
+			$msg = [
+				'error' => 'You can not request a leave for days that have already passed.',
+			];
+		else if ($checkStart || $isMedical) {
+			Leave::create($data);
 			$msg = [
 				'success' => 'Leave request saved successfully.'
 			];
 		}
-		else
-			$msg = [
-				'error' => 'Leave request could not be saved. (Requested days: ' . $diff . ', remaining days: ' . $request->user()->leaveDays . ')',
-			];
+
 		return redirect(url()->previous())->with($msg);
 	}
 
 	/**
 	 * Display the specified resource.
-	 *
 	 * @param Leave $leave
 	 * @return \Illuminate\Http\Response
 	 */
@@ -94,7 +104,6 @@ class LeaveController extends Controller {
 
 	/**
 	 * Show the form for editing a Leave request
-	 *
 	 * @param Leave $leave
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
@@ -107,7 +116,6 @@ class LeaveController extends Controller {
 
 	/**
 	 * Update the specified resource in storage.
-	 *
 	 * @param \Illuminate\Http\Request $request
 	 * @param Leave $leave
 	 * @return \Illuminate\Http\Response
@@ -118,7 +126,6 @@ class LeaveController extends Controller {
 
 	/**
 	 * Remove the specified resource from storage.
-	 *
 	 * @param Leave $leave
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
