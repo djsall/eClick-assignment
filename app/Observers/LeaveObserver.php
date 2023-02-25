@@ -10,8 +10,7 @@ class LeaveObserver {
 	/**
 	 * Handle the Leave "created" event.
 	 * if the leave is already accepted, update the remaining leave days, if it is not medical leave
-
-	 * @param \App\Models\Leave $leave
+ * @param Leave $leave
 	 * @return void
 	 */
 	public function created(Leave $leave) {
@@ -28,8 +27,7 @@ class LeaveObserver {
 
 	/**
 	 * Handle the Leave "updated" event.
-	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return void
 	 */
 	public function updated(Leave $leave) {
@@ -46,8 +44,7 @@ class LeaveObserver {
 
 	/**
 	 * Handle the Leave "deleted" event.
-	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return void
 	 */
 	public function deleted(Leave $leave) {
@@ -57,8 +54,7 @@ class LeaveObserver {
 
 	/**
 	 * Handle the Leave "restored" event.
-	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return void
 	 */
 	public function restored(Leave $leave) {
@@ -67,8 +63,7 @@ class LeaveObserver {
 
 	/**
 	 * Handle the Leave "force deleted" event.
-	 *
-	 * @param \App\Models\Leave $leave
+	 * @param Leave $leave
 	 * @return void
 	 */
 	public function forceDeleted(Leave $leave) {

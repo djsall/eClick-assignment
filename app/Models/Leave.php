@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\AppHelper;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,8 +58,7 @@ class Leave extends Model {
 	}
 
 	public function length(): int {
-		$period = CarbonPeriod::create($this->start, $this->end);
-		return $period->count();
+		return AppHelper::calculateDays($this->start, $this->end);
 	}
 
 	/**
@@ -81,6 +81,30 @@ class Leave extends Model {
 	}
 
 	/**
+	 * Returns whether this Leave instance overlaps other Leave instances of the user.
+	 * @return bool
+	 */
+	public function doesOverlap(): bool {
+		$match = false;
+
+		foreach (Leave::where('user_id', '=', $this->user_id) as $lv) {
+			if ($lv->checkOverlap($this)) {
+				$match = true;
+				break;
+			}
+		}
+		return $match;
+	}
+
+	public function isInFuture(): bool {
+		$now = Carbon::now();
+		$checkStart = Carbon::parse($this->start)->gte($now);
+		$checkEnd = Carbon::parse($this->end)->gte($now);
+
+		return $checkStart && $checkEnd;
+	}
+
+	/**
 	 * Checks whether the leave model passed in:
 	 * - isn't in the past
 	 * - isn't exceeding the users available leave days
@@ -88,26 +112,10 @@ class Leave extends Model {
 	 * @return bool
 	 */
 
-	public function verifyInputDates(): bool {
-		$now = Carbon::now();
-		$checkStart = Carbon::parse($this->start)->gte($now);
-		$checkEnd = Carbon::parse($this->end)->gte($now);
-
+	public function verifyLeave(): bool {
 		if ($this->type == 'paid') {
-			if ($this->userHasEnoughLeaveDays()) {
-				$match = false;
-
-				foreach (Leave::where('user_id', '=', $this->user_id) as $lv) {
-					if ($lv->checkOverlap($this)) {
-						$match = true;
-						break;
-					}
-				}
-				return $match;
-			}
-			else
-				return false;
+			return $this->userHasEnoughLeaveDays() && !$this->doesOverlap() && $this->isInFuture();
 		}
-		return $checkStart && $checkEnd;
+		return true;
 	}
 }

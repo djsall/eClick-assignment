@@ -8,6 +8,7 @@ use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class LeaveController extends Controller {
 
@@ -55,39 +56,30 @@ class LeaveController extends Controller {
 		 * If the user is a manager, he can select the leaving user, and it gets automatically accepted
 		 */
 		if ($request->user()->isManager()) {
-			$data['accepted'] = true;
 			$user = User::find($data['user_id']);
+			$data['accepted'] = true;
 		}
 		else {
-			$data['user_id'] = $request->user()->id;
-			$data['accepted'] = false;
 			$user = $request->user();
+			$data['user_id'] = $user->id;
+			$data['accepted'] = false;
 		}
 
 		$leave = new Leave($data);
 
-		$minDate = Carbon::now();
-		$checkStart = Carbon::parse($data['start'])->gte($minDate);
-		$checkEnd = Carbon::parse($data['end'])->gte($minDate);
-		$diffInDays = AppHelper::calculateDays($data['start'], $data['end']);
-
 		/**
 		 * If the user has enough days to spare, or if they are notifying us of medical leave, than save our leave request.
 		 */
-		if (!$user->hasEnoughLeaveDaysFor($leave))
-			$msg = [
-				'error' => 'Leave request could not be saved. (Requested days: ' . $diffInDays . ', remaining days: ' . $request->user()->leaveDays . ')',
-			];
-		else if (!$leave->verifyInputDates())
-			$msg = [
-				'error' => 'You can not request a leave for days that have already passed.',
-			];
-		else {
+		if ($leave->verifyLeave()) {
 			Leave::create($data);
 			$msg = [
 				'success' => 'Leave request saved successfully.'
 			];
 		}
+		else
+			$msg = [
+				'error' => view('messages.verify-leave-error-message')->with(['user' => $user])->render(),
+			];
 
 		return redirect(url()->previous())->with($msg);
 	}
