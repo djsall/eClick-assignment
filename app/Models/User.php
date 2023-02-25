@@ -93,7 +93,7 @@ class User extends Authenticatable {
 
 	/**
 	 * Returns whether the user has enough days remaining for the requested Leave instance.
-	 * @param $days
+	 * @param Leave $leave
 	 * @return bool
 	 */
 	public function hasEnoughLeaveDaysFor(Leave $leave): bool {

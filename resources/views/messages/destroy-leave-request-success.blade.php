@@ -1,0 +1,1 @@
+Leave request for <strong> {{ $leave->user->name }}</strong> deleted sucessfully.

@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\AppHelper;
 use App\Http\Requests\StoreLeaveRequest;
 use App\Models\Leave;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
 
 class LeaveController extends Controller {
 
@@ -123,7 +120,7 @@ class LeaveController extends Controller {
 	public function destroy(Leave $leave) {
 		if ($leave->delete())
 			$msg = [
-				'success' => 'Leave request for <strong>' . $leave->user->name . '</strong> deleted sucessfully.'
+				'success' => view('messages.destroy-leave-request-success')->with(['leave' => $leave])->render()
 			];
 		else
 			$msg = [
