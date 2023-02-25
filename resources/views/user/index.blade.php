@@ -38,7 +38,7 @@
 					<div class="col-md-1">
 						{{ $user->leaveDays }} days
 					</div>
-					<div class="col-md-1">
+					<div class="col-md-1 text-end">
 						<a href="{{ route("user.edit", $user->id) }}" class="fw-bold">
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
 								<path fill-rule="evenodd"
