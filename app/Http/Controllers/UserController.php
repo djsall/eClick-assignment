@@ -20,7 +20,6 @@ class UserController extends Controller {
 
 	/**
 	 * Display a listing of the resource.
-	 *
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function index() {
@@ -32,7 +31,6 @@ class UserController extends Controller {
 
 	/**
 	 * Show the form for creating a new resource.
-	 *
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create() {
@@ -41,7 +39,6 @@ class UserController extends Controller {
 
 	/**
 	 * Store a newly created resource in storage.
-	 *
 	 * @param \Illuminate\Http\Request $request
 	 * @return \Illuminate\Http\Response
 	 */
@@ -51,7 +48,6 @@ class UserController extends Controller {
 
 	/**
 	 * Display the specified resource.
-	 *
 	 * @param User $user
 	 * @return \Illuminate\Http\Response
 	 */
@@ -61,7 +57,6 @@ class UserController extends Controller {
 
 	/**
 	 * Show the form for editing the specified resource.
-	 *
 	 * @param User $user
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
@@ -94,12 +89,15 @@ class UserController extends Controller {
 
 	/**
 	 * Remove the specified resource from storage.
-	 *
 	 * @param User $user
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(User $user) {
-		if ($user->delete()) {
+		if ($user->leaves()->count() > 0)
+			$msg = [
+				'error' => 'Can not delete user, that has Leave entries.'
+			];
+		else if ($user->delete()) {
 			$msg = [
 				'success' => 'Successfully deleted user.'
 			];
