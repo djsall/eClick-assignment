@@ -95,5 +95,24 @@
 				</div>
 			</div>
 		</div>
+		<div class="row justify-content-center mt-4">
+			<div class="col-md-8">
+				<div class="card">
+					<div class="card-header">Delete user?</div>
+					<div class="card-body">
+						<form action="{{ route('user.destroy', $user->id) }}" method="post">
+							@csrf
+							@method('DELETE')
+							<div class="row mb-0">
+								<label for="delete-btn" class="col-md-4 col-form-label text-md-end">Delete user</label>
+								<div class="col-md-6">
+									<button id="delete-btn" class="btn btn-sm btn-outline-danger">❌</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 @endsection
