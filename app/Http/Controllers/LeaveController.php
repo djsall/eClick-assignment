@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\LeaveAccepted;
+use App\Helpers\AppHelper;
+use App\Http\Requests\StoreLeaveRequest;
 use App\Models\Leave;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 
 class LeaveController extends Controller {
 
@@ -49,35 +47,17 @@ class LeaveController extends Controller {
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param \Illuminate\Http\Request $request
+	 * @param StoreLeaveRequest $request
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
-	public function store(Request $request) {
-
-		$data = $request->validate([
-			'start'   => [
-				'required',
-				'date'
-			],
-			'end'     => [
-				'required',
-				'date'
-			],
-			'type'    => [
-				'required',
-				'in:medical,paid'
-			],
-			'user_id' => [
-				'int'
-			]
-		]);
+	public function store(StoreLeaveRequest $request) {
+		$data = $request->validated();
 
 		/**
 		 * If the user is a manager, he can select the leaving user, and it gets automatically accepted
 		 */
 		if ($request->user()->isManager()) {
 			$data['accepted'] = true;
-			$data['user_id'] = $request['user_id'];
 			$user = User::find($data['user_id']);
 		}
 		else {
@@ -86,22 +66,14 @@ class LeaveController extends Controller {
 			$user = $request->user();
 		}
 
-		$diff = self::calculateDays($data['start'], $data['end']);
+		$diff = AppHelper::calculateDays($data['start'], $data['end']);
 		/**
 		 * If the user has enough days to spare, or if they are notifying us of medical leave
 		 */
-		if ($user->leaveDays >= $diff || $data['type'] == 'medical') {
-			if ($leave = Leave::create($data)) {
-				//if the leave is already accepted, update the remaining leave days, if it is not medical leave
-				if ($data['accepted'] && $data['type'] == 'paid') {
-					self::subtractUserDays($user, $data['start'], $data['end']);
-					Mail::to($user)->send(new LeaveAccepted($leave));
-				}
-				$msg = [
-					'success' => 'Leave request saved successfully.'
-				];
-			}
-			//TODO: else: log database error?
+		if (($user->leaveDays >= $diff || $data['type'] == 'medical') && Leave::create($data)) {
+			$msg = [
+				'success' => 'Leave request saved successfully.'
+			];
 		}
 		else
 			$msg = [
@@ -151,8 +123,6 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(Leave $leave) {
-		if ($leave->accepted && $leave->type == 'paid')
-			self::addUserDays($leave);
 		if ($leave->delete())
 			$msg = [
 				'success' => 'Leave request for <strong>' . $leave->user->name . '</strong> deleted sucessfully.'
@@ -170,48 +140,10 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function accept(Leave $leave) {
-		$leave->accepted = true;
-		$leave->save();
-
-		self::subtractUserDays($leave->user, $leave->start, $leave->end);
-
-		Mail::to($leave->user)->send(new LeaveAccepted($leave));
+		$leave->accept();
 
 		return redirect(url()->previous())->with([
 			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
 		]);
-	}
-
-	/**
-	 * Returns the distance in days between two dates
-	 * @param $start
-	 * @param $end
-	 * @return int
-	 */
-	static function calculateDays($start, $end) {
-		$start = Carbon::parse($start);
-		$end = Carbon::parse($end);
-		return $start->diffInDays($end, true);
-	}
-
-	/**
-	 * Update the remaining leave days of our user
-	 * @param User $user
-	 * @param $start
-	 * @param $end
-	 */
-	static function subtractUserDays(User $user, $start, $end) {
-		$user->leaveDays -= self::calculateDays($start, $end);
-		$user->save();
-	}
-
-	/**
-	 * Update the remaining leave days of our user
-	 * @param Leave $leave
-	 */
-	static function addUserDays(Leave $leave) {
-		$user = $leave->user;
-		$user->leaveDays += self::calculateDays($leave->start, $leave->end);
-		$user->save();
 	}
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Helpers\AppHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,12 +55,32 @@ class User extends Authenticatable {
 		"manager"
 	];
 
-	public function isEmployee() {
+	public function isEmployee(): bool {
 		return $this->role == "employee";
 	}
 
-	public function isManager() {
+	public function isManager(): bool {
 		return $this->role == "manager";
+	}
+
+	/**
+	 * Update the remaining leave days of our user
+	 * @param Leave $leave
+	 */
+
+	public function addLeaveDays(Leave $leave) {
+		$this->leaveDays += Apphelper::calculateDays($leave->start, $leave->end);
+		$this->save();
+	}
+
+	/**
+	 * Update the remaining leave days of our user
+	 * @param $start
+	 * @param $end
+	 */
+	public function subtractLeaveDays($start, $end) {
+		$this->leaveDays -= AppHelper::calculateDays($start, $end);
+		$this->save();
 	}
 
 	/**

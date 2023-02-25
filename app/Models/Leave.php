@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Mail\LeaveAccepted;
+use App\Observers\LeaveObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Mail;
 
 class Leave extends Model {
 
@@ -31,14 +34,6 @@ class Leave extends Model {
 	}
 
 	/**
-	 * Returns whether this Leave was granted or not
-	 * @return boolean
-	 */
-	public function isAccepted(): bool {
-		return $this->accepted;
-	}
-
-	/**
 	 * Returns if this Leave is medical
 	 * @return bool
 	 */
@@ -52,5 +47,13 @@ class Leave extends Model {
 	 */
 	public function isPaid(): bool {
 		return $this->type == "paid";
+	}
+
+	/**
+	 * Sets the Leave to accepted status
+	 */
+	public function accept() {
+		$this->accepted = true;
+		$this->save();
 	}
 }
