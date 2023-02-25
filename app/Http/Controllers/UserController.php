@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller {
 	public function __construct() {
+		
 		$this->middleware('manager', [
 			'only' => [
 				'index',
@@ -61,6 +62,7 @@ class UserController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
 	 */
 	public function edit(User $user) {
+
 		return view('user.edit')->with([
 			'user' => $user
 		]);
@@ -73,9 +75,8 @@ class UserController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function update(StoreUserRequest $request, User $user) {
-		$data = $request->validated();
 
-		if ($user->update($data)) {
+		if ($user->update($request->validated())) {
 			$msg = [
 				'success' => 'Successfully updated user.'
 			];
@@ -84,6 +85,7 @@ class UserController extends Controller {
 			$msg = [
 				'error' => 'Error updating user.'
 			];
+
 		return redirect(url()->previous())->with($msg);
 	}
 
@@ -93,19 +95,19 @@ class UserController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function destroy(User $user) {
-		if ($user->leaves()->count() > 0)
-			$msg = [
-				'error' => 'Can not delete user, that has Leave entries.'
-			];
-		else if ($user->delete()) {
+
+		if ($user->leaves()->count() == 0) {
+			$user->delete();
 			$msg = [
 				'success' => 'Successfully deleted user.'
 			];
 		}
-		else
+		else {
 			$msg = [
-				'error' => 'Error deleting user.'
+				'error' => 'Can not delete user, that has Leave entries.'
 			];
+		}
+
 		return redirect(url()->previous())->with($msg);
 	}
 }
