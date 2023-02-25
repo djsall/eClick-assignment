@@ -75,7 +75,7 @@ class LeaveController extends Controller {
 		}
 		else
 			$msg = [
-				'error' => view('messages.verify-leave-error-message')->with(['user' => $user])->render(),
+				'error' => view('messages.error.verify-leave')->with(['user' => $user])->render(),
 			];
 
 		return redirect(url()->previous())->with($msg);
@@ -120,11 +120,11 @@ class LeaveController extends Controller {
 	public function destroy(Leave $leave) {
 		if ($leave->delete())
 			$msg = [
-				'success' => view('messages.destroy-leave-request-success')->with(['leave' => $leave])->render()
+				'success' => view('messages.success.destroy-leave-request')->with(['leave' => $leave])->render()
 			];
 		else
 			$msg = [
-				'error' => 'Leave request could not be deleted.'
+				'error' => view('messages.error.destroy-leave-request')->with(['leave' => $leave])->render()
 			];
 		return redirect(url()->previous())->with($msg);
 	}
@@ -138,7 +138,7 @@ class LeaveController extends Controller {
 		$leave->accept();
 
 		return redirect(url()->previous())->with([
-			'success' => 'Accepted leave for <strong>' . $leave->user->name . '</strong> between <strong>' . $leave->start . '</strong> and <strong>' . $leave->end . '</strong>.'
+			'success' => view('messages.success.accept-leave-request')->with(['leave' => $leave])->render()
 		]);
 	}
 }

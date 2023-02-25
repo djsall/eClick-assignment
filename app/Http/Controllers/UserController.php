@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
-use App\Rules\IsAllowedDomain;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller {
 	public function __construct() {
@@ -75,8 +73,7 @@ class UserController extends Controller {
 
 	/**
 	 * Update the specified resource in storage.
-	 *
-	 * @param Request $request
+	 * @param StoreUserRequest $request
 	 * @param User $user
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
@@ -85,12 +82,12 @@ class UserController extends Controller {
 
 		if ($user->update($data)) {
 			$msg = [
-				'success' => 'Successfully updated user'
+				'success' => 'Successfully updated user.'
 			];
 		}
 		else
 			$msg = [
-				'error' => 'Error updating user'
+				'error' => 'Error updating user.'
 			];
 		return redirect(url()->previous())->with($msg);
 	}
@@ -104,12 +101,12 @@ class UserController extends Controller {
 	public function destroy(User $user) {
 		if ($user->delete()) {
 			$msg = [
-				"success" => "Successfully deleted user."
+				'success' => 'Successfully deleted user.'
 			];
 		}
 		else
 			$msg = [
-				"error" => "Could not delete user."
+				'error' => 'Error deleting user.'
 			];
 		return redirect(url()->previous())->with($msg);
 	}

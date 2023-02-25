@@ -1,0 +1,1 @@
+Leave request could not be deleted.

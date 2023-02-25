@@ -1,0 +1,1 @@
+Accepted leave for <strong>{{ $leave->user->name }}</strong> between <strong>{{ $leave->start }}</strong> and <strong>{{ $leave->end }}</strong>.
