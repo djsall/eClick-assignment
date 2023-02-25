@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Rules\IsAllowedDomain;
 use Illuminate\Http\Request;
@@ -79,39 +80,8 @@ class UserController extends Controller {
 	 * @param User $user
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
-	public function update(Request $request, User $user) {
-		$data = Validator::make($request->all(), [
-			'name'      => [
-				'required',
-				'string',
-				'max:255',
-			],
-			'email'     => [
-				'required',
-				'string',
-				'email',
-				'max:255',
-				new IsAllowedDomain
-			],
-			'password'  => [
-				'required',
-				'string',
-				'min:8',
-				'confirmed',
-			],
-			'role'      => [
-				'required',
-				'in:employee,manager',
-			],
-			'leaveDays' => [
-				'required',
-				'int',
-			],
-			'post'      => [
-				'required',
-				'string',
-			]
-		])->validated();
+	public function update(StoreUserRequest $request, User $user) {
+		$data = $request->validated();
 
 		if ($user->update($data)) {
 			$msg = [
