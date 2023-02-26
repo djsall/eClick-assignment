@@ -97,7 +97,7 @@ class Leave extends Model {
 	}
 
 	public function isInFuture(): bool {
-		$now = Carbon::now();
+		$now = Carbon::today();
 		$checkStart = Carbon::parse($this->start)->gte($now);
 		$checkEnd = Carbon::parse($this->end)->gte($now);
 

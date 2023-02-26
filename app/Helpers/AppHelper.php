@@ -15,8 +15,6 @@ class AppHelper {
 		$start = Carbon::parse($start);
 		$end = Carbon::parse($end);
 
-		return $start->diffInDaysFiltered(function (Carbon $date) {
-			return !$date->isWeekend();
-		}, $end, true);
+		return $start->diffInWeekdays($end, true);
 	}
 }
