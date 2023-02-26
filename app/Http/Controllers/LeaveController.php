@@ -6,6 +6,7 @@ use App\Http\Requests\StoreLeaveRequest;
 use App\Models\Leave;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LeaveController extends Controller {
 
@@ -73,7 +74,7 @@ class LeaveController extends Controller {
 				'error' => view('messages.error.verify-leave')->with(['user' => $user])->render(),
 			];
 
-		return redirect(url()->previous())->with($msg);
+		return redirect(url()->previous())->withInput()->with($msg);
 	}
 
 	/**

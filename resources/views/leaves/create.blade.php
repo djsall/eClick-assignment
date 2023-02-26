@@ -6,12 +6,12 @@
 				@csrf
 				<div class="form-group">
 					<label for="start" class="form-label">Start date:</label>
-					<input type="date" id="start" name="start" required class="form-control" value="{{ Carbon\Carbon::today()->format("Y-m-d") }}">
+					<input type="date" id="start" name="start" required class="form-control" value="{{ old('start', Carbon\Carbon::today()->format("Y-m-d")) }}">
 				</div>
 
 				<div class="form-group mt-2">
 					<label for="end" class="form-label">End date:</label>
-					<input type="date" id="end" name="end" required class="form-control"value="{{ Carbon\Carbon::tomorrow()->format("Y-m-d") }}">
+					<input type="date" id="end" name="end" required class="form-control" value="{{ old('end') }}">
 				</div>
 
 				<div class="form-group mt-2">
@@ -27,7 +27,7 @@
 						<label for="user_id" class="form-label">Employee:</label>
 						<select name="user_id" id="user_id" class="form-control">
 							@foreach($users as $user)
-								<option value="{{$user->id}}" @if(Auth::user()->id == $user->id) selected @endif>{{$user->name}}</option>
+								<option value="{{$user->id}}" @if(old('user_id', Auth::id()) == $user->id) selected @endif>{{$user->name}}</option>
 							@endforeach
 						</select>
 					</div>
