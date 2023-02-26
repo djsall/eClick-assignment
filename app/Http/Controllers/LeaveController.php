@@ -47,28 +47,23 @@ class LeaveController extends Controller {
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 	 */
 	public function store(StoreLeaveRequest $request) {
-		$data = $request->validated();
+		$leave = new Leave($request->validated());
 
 		/**
 		 * If the user is a manager, he can select the leaving user, and it gets automatically accepted
 		 */
 		if ($request->user()->isManager()) {
-			$user = User::find($data['user_id']);
-			$data['accepted'] = true;
+			$user = User::find($leave->user_id);
+			$leave->accepted = true;
 		}
 		else {
 			$user = $request->user();
-			$data['user_id'] = $user->id;
-			$data['accepted'] = false;
+			$leave->user_id = $user->id;
+			$leave->accepted = false;
 		}
 
-		$leave = new Leave($data);
-
-		/**
-		 * If the user has enough days to spare, or if they are notifying us of medical leave, than save our leave request.
-		 */
 		if ($leave->verifyLeave()) {
-			Leave::create($data);
+			$leave->save();
 			$msg = [
 				'success' => 'Leave request saved successfully.'
 			];
