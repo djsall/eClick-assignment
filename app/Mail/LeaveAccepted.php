@@ -30,7 +30,8 @@ class LeaveAccepted extends Mailable {
 	 *
 	 * @return \Illuminate\Mail\Mailables\Envelope
 	 */
-	public function envelope() {
+	public function envelope(): Envelope
+    {
 		return new Envelope(from: new Address('system@eclick.hu', 'System User'), subject: 'Leave Accepted',);
 	}
 
@@ -39,7 +40,8 @@ class LeaveAccepted extends Mailable {
 	 *
 	 * @return \Illuminate\Mail\Mailables\Content
 	 */
-	public function content() {
+	public function content(): Content
+    {
 		return new Content(view: 'emails.leave.accepted', with: [
 			'leave' => $this->leave
 		]);
@@ -50,7 +52,8 @@ class LeaveAccepted extends Mailable {
 	 *
 	 * @return array
 	 */
-	public function attachments() {
+	public function attachments(): array
+    {
 		return [];
 	}
 }

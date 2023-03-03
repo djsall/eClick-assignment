@@ -11,7 +11,7 @@ class IsAllowedDomain implements Rule {
 	 * Allowed email domains for users signing up
 	 */
 
-	protected $allowedDomains = [
+	protected array $allowedDomains = [
 		'eclick.hu',
 	];
 
@@ -31,8 +31,8 @@ class IsAllowedDomain implements Rule {
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function passes($attribute, $value) {
-		//
+	public function passes($attribute, $value): bool
+    {
 		$domain = substr(strrchr($value, "@"), 1);
 		if (in_array($domain, $this->allowedDomains))
 			return true;
@@ -44,7 +44,8 @@ class IsAllowedDomain implements Rule {
 	 *
 	 * @return string
 	 */
-	public function message() {
+	public function message(): string
+    {
 		return 'This application only allows signing up with @eClick.hu e-mail addresses.';
 	}
 }

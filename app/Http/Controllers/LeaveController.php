@@ -78,15 +78,6 @@ class LeaveController extends Controller {
 	}
 
 	/**
-	 * Display the specified resource.
-	 * @param Leave $leave
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show(Leave $leave) {
-		//
-	}
-
-	/**
 	 * Show the form for editing a Leave request
 	 * @param Leave $leave
 	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
@@ -96,16 +87,6 @@ class LeaveController extends Controller {
 		return view('leaves.edit')->with([
 			'leave' => $leave
 		]);
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 * @param \Illuminate\Http\Request $request
-	 * @param Leave $leave
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, Leave $leave) {
-		//
 	}
 
 	/**

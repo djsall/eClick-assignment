@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller {
 	public function __construct() {
-		
+
 		$this->middleware('manager', [
 			'only' => [
 				'index',
@@ -28,32 +28,6 @@ class UserController extends Controller {
 		return view('user.index')->with([
 			'users' => User::all()
 		]);
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create() {
-		//
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 * @param \Illuminate\Http\Request $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request) {
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 * @param User $user
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show(User $user) {
-		//
 	}
 
 	/**

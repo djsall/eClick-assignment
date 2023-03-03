@@ -85,15 +85,12 @@ class Leave extends Model {
 	 * @return bool
 	 */
 	public function doesOverlap(): bool {
-		$match = false;
-
-		foreach (Leave::where('user_id', '=', $this->user_id) as $lv) {
+		foreach (Leave::where('user_id', $this->user_id) as $lv) {
 			if ($lv->checkOverlap($this)) {
-				$match = true;
-				break;
+                return true;
 			}
 		}
-		return $match;
+		return false;
 	}
 
 	public function isInFuture(): bool {
@@ -116,6 +113,6 @@ class Leave extends Model {
 		if ($this->type == 'paid') {
 			return $this->userHasEnoughLeaveDays() && !$this->doesOverlap() && $this->isInFuture();
 		}
-		return true;
+		return false;
 	}
 }
