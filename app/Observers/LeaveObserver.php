@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\UpdatePaidLeave;
 use App\Mail\LeaveAccepted;
 use App\Models\Leave;
 use Illuminate\Support\Facades\Mail;
@@ -13,15 +14,9 @@ class LeaveObserver {
  * @param Leave $leave
 	 * @return void
 	 */
-	public function created(Leave $leave) {
-		if ($leave->type != 'paid')
-			return;
-		if (!$leave->accepted)
-			return;
-
-		$leave->user->subtractLeaveDays($leave->start, $leave->end);
-		$leave->update();
-
+	public function created(Leave $leave): void
+    {
+        UpdatePaidLeave::dispatch($leave);
 		Mail::to($leave->user)->send(new LeaveAccepted($leave));
 	}
 
@@ -30,16 +25,10 @@ class LeaveObserver {
 	 * @param Leave $leave
 	 * @return void
 	 */
-	public function updated(Leave $leave) {
-		if ($leave->type != 'paid')
-			return;
-		if (!$leave->accepted)
-			return;
-
-		$leave->user->subtractLeaveDays($leave->start, $leave->end);
-
+	public function updated(Leave $leave): void
+    {
+		UpdatePaidLeave::dispatch($leave);
 		Mail::to($leave->user)->send(new LeaveAccepted($leave));
-
 	}
 
 	/**
@@ -47,26 +36,9 @@ class LeaveObserver {
 	 * @param Leave $leave
 	 * @return void
 	 */
-	public function deleted(Leave $leave) {
+	public function deleted(Leave $leave): void
+    {
 		if ($leave->accepted && $leave->type == 'paid')
 			$leave->user->addLeaveDays($leave);
-	}
-
-	/**
-	 * Handle the Leave "restored" event.
-	 * @param Leave $leave
-	 * @return void
-	 */
-	public function restored(Leave $leave) {
-		//
-	}
-
-	/**
-	 * Handle the Leave "force deleted" event.
-	 * @param Leave $leave
-	 * @return void
-	 */
-	public function forceDeleted(Leave $leave) {
-		//
 	}
 }
