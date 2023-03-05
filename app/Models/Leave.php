@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeaveTypeEnum;
 use App\Helpers\AppHelper;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -24,6 +25,10 @@ class Leave extends Model
         "type",
     ];
 
+    protected $casts = [
+      'type' => LeaveTypeEnum::class
+    ];
+
     use HasFactory;
 
     /**
@@ -41,7 +46,7 @@ class Leave extends Model
      */
     public function isMedical(): bool
     {
-        return $this->type == "medical";
+        return $this->type == LeaveTypeEnum::Medical;
     }
 
     /**
@@ -50,7 +55,7 @@ class Leave extends Model
      */
     public function isPaid(): bool
     {
-        return $this->type == "paid";
+        return $this->type == LeaveTypeEnum::Paid;
     }
 
     /**
