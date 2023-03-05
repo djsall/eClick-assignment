@@ -26,7 +26,7 @@ class Leave extends Model
     ];
 
     protected $casts = [
-      'type' => LeaveTypeEnum::class
+        'type' => LeaveTypeEnum::class
     ];
 
     use HasFactory;
@@ -132,11 +132,11 @@ class Leave extends Model
         return false;
     }
 
-    public function color()
+    public function color(): string
     {
         if ($this->isMedical())
             return AppHelper::$medicalColor;
-        if($this->accepted)
+        if ($this->accepted)
             return AppHelper::$acceptedColor;
         return AppHelper::$pendingColor;
     }
